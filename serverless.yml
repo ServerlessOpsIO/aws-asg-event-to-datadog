@@ -1,0 +1,37 @@
+# Send ASG events to Datadog
+service: asg-event-to-datadog
+
+plugins:
+  - serverless-python-requirements
+  - serverless-cloudformation-parameter-setter
+  - serverless-sam
+
+custom:
+  stage: "${opt:stage, env:SLS_STAGE, 'dev'}"
+  profile: "${opt:aws-profile, env:AWS_PROFILE, env:AWS_DEFAULT_PROFILE, 'default'}"
+  log_level: "${env:LOG_LEVEL, 'INFO'}"
+
+  cf-parameters:
+    datadog_api_key: "${env:DATADOG_API_KEY, ''}"
+    datadog_app_key: "${env:DATADOG_APP_KEY, ''}"
+
+  pythonRequirements:
+    dockerizePip: true
+
+provider:
+  name: aws
+  profile: ${self:custom.profile}
+  stage: ${self:custom.stage}
+  environment:
+    LOG_LEVEL: ${self:custom.log_level}
+
+functions:
+  WriteEvent:
+    handler: handlers/write-event-to-datadog.handler
+    description: "Write ASG autoscaling events to Datadog"
+    memorySize: 128
+    timeout: 30
+    environment:
+      DATADOG_API_KEY: ${self:custom.datadog_api_key}
+      DATADOG_APP_KEY: ${self:custom.datadog_app_key}
+
