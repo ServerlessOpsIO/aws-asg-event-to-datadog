@@ -12,8 +12,8 @@ custom:
   log_level: "${env:LOG_LEVEL, 'INFO'}"
 
   cf-parameters:
-    datadog_api_key: "${env:DATADOG_API_KEY, ''}"
-    datadog_app_key: "${env:DATADOG_APP_KEY, ''}"
+    DatadogApiKey: "${env:DATADOG_API_KEY, ''}"
+    DatadogAppKey: "${env:DATADOG_APP_KEY, ''}"
 
   pythonRequirements:
     dockerizePip: false
@@ -32,6 +32,19 @@ functions:
     memorySize: 128
     timeout: 30
     environment:
-      DATADOG_API_KEY: ${self:custom.datadog_api_key}
-      DATADOG_APP_KEY: ${self:custom.datadog_app_key}
+      DATADOG_API_KEY:
+        Ref: DatadogApiKey
+      DATADOG_APP_KEY:
+        Ref: DatadogAppKey
+
+resources:
+  Parameters:
+    DatadogApiKey:
+      Type: String
+      Description: "Datadog API key"
+      NoEcho: true
+    DatadogAppKey:
+      Type: String
+      Description: "Datadog App key"
+      NoEcho: true
 
