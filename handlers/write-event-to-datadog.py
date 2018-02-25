@@ -53,7 +53,7 @@ def _create_datadog_event(event: dict) -> dict:
 
 def _is_asg_launch_action(event: dict) -> bool:
     '''Check if event is an ASG launch event.'''
-    return event.get('details').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_LAUNCHING'
+    return event.get('detail').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_LAUNCHING'
 
 
 def _is_asg_launch_successful(event: dict) -> dict:
@@ -86,7 +86,7 @@ def _is_asg_launch_unsuccessful(event: dict) -> dict:
 
 def _is_asg_terminate_action(event: dict) -> dict:
     '''Check if event is a successful launch event'''
-    return event.get('details').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_TERMINATING'
+    return event.get('detail').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_TERMINATING'
 
 
 def _is_asg_terminate_successful(event: dict) -> dict:
