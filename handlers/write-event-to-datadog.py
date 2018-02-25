@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 DATADOG_API_KEY = os.environ.get('DATADOG_API_KEY')
 DATADOG_APP_KEY = os.environ.get('DATADOG_APP_KEY')
+datadog.initialize(api_key=DATADOG_API_KEY, app_key=DATADOG_APP_KEY)
 
 SOURCE_TYPE_NAME = 'AWS/ASG'
 
@@ -123,5 +124,6 @@ def handler(event, context):
     datadog_event = _create_datadog_event(event)
     resp = datadog.api.Event.create(**datadog_event)
 
+    _logger.info(json.dumps(resp))
     return json.dumps(resp)
 
