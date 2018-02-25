@@ -36,6 +36,11 @@ functions:
         Ref: DatadogApiKey
       DATADOG_APP_KEY:
         Ref: DatadogAppKey
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - "aws.autoscaling"
 
 resources:
   Parameters:
