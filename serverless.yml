@@ -28,7 +28,7 @@ provider:
 
 functions:
   WriteEvent:
-    handler: handlers/write-event-to-datadog.handler
+    handler: handlers/write-launch-event-to-datadog.handler
     description: "Write ASG autoscaling events to Datadog"
     memorySize: 128
     timeout: 30
@@ -42,6 +42,13 @@ functions:
           event:
             source:
               - "aws.autoscaling"
+            detail-type:
+              - "EC2 Instance-launch Lifecycle Action"
+              - "EC2 Instance Launch Successful"
+              - "EC2 Instance Launch Unuccessful"
+              - "EC2 Instance-terminate Lifecycle Action"
+              - "EC2 Instance Terminate Successful"
+              - "EC2 Instance Terminate Unsuccessful"
 
 resources:
   Parameters:

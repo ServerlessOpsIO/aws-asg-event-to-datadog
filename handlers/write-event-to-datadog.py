@@ -53,68 +53,32 @@ def _create_datadog_event(event: dict) -> dict:
 
 def _is_asg_launch_action(event: dict) -> bool:
     '''Check if event is an ASG launch event.'''
-    return event.get('detail').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_LAUNCHING'
+    return event.get('detail-type') == 'EC2 Instance-launch Lifecycle Action'
 
 
 def _is_asg_launch_successful(event: dict) -> dict:
     '''Check if event is a successful launch event'''
-    detail_type = event.get('detail-type')
-    launch = 'Launch' in detail_type
-    status = 'Successful' in detail_type
-
-    if launch and status:
-        r = True
-    else:
-        r = False
-
-    return r
+    return event.get('detail-type') == 'EC2 Instance Launch Successful'
 
 
 def _is_asg_launch_unsuccessful(event: dict) -> dict:
     '''Check if event is a successful launch event'''
-    detail_type = event.get('detail-type')
-    launch = 'Launch' in detail_type
-    status = 'Unsuccessful' in detail_type
-
-    if launch and status:
-        r = True
-    else:
-        r = False
-
-    return r
+    return event.get('detail-type') == 'EC2 Instance Launch Unsuccessful'
 
 
 def _is_asg_terminate_action(event: dict) -> dict:
     '''Check if event is a successful launch event'''
-    return event.get('detail').get('LifecycleTransition') == 'autoscaling:EC2_INSTANCE_TERMINATING'
+    return event.get('detail-type') == 'EC2 Instance-terminate Lifecycle Action'
 
 
 def _is_asg_terminate_successful(event: dict) -> dict:
     '''Check if event is a successful terminate event'''
-    detail_type = event.get('detail-type')
-    launch = 'Terminate' in detail_type
-    status = 'Successful' in detail_type
-
-    if launch and status:
-        r = True
-    else:
-        r = False
-
-    return r
+    return event.get('detail-type') == 'EC2 Instance Terminate Successful'
 
 
 def _is_asg_terminate_unsuccessful(event: dict) -> dict:
     '''Check if event is a successful terminate event'''
-    detail_type = event.get('detail-type')
-    launch = 'Terminate' in detail_type
-    status = 'Unsuccessful' in detail_type
-
-    if launch and status:
-        r = True
-    else:
-        r = False
-
-    return r
+    return event.get('detail-type') == 'EC2 Instance Terminate Unsuccessful'
 
 
 def handler(event, context):
