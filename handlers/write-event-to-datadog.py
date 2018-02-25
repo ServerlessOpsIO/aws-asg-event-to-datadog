@@ -16,6 +16,22 @@ datadog.initialize(api_key=DATADOG_API_KEY, app_key=DATADOG_APP_KEY)
 
 SOURCE_TYPE_NAME = 'AWS/ASG'
 
+INFO_TYPES = [
+    'EC2 Instance-launch Lifecycle Action',
+    'EC2 Instance-terminate Lifecycle Action'
+]
+
+ERROR_TYPES = [
+    'EC2 Instance Launch Successful',
+    'EC2 Instance Terminate Successful'
+]
+
+SUCCESS_TYPES = [
+    'EC2 Instance Launch Unsuccessful',
+    'EC2 Instance Terminate Unsuccessful'
+
+]
+
 def _create_datadog_event(event: dict) -> dict:
     datadog_event = {}
 
@@ -30,55 +46,15 @@ def _create_datadog_event(event: dict) -> dict:
         detail=datadog_event['title']
     )
 
-    if _is_asg_launch_action(event):
+    event_detail_type = event.get('detail-type')
+    if event_detail_type in INFO_TYPES:
         datadog_event['alert_type'] = 'info'
-
-    elif _is_asg_launch_successful(event):
+    elif event_detail_type in SUCCESS_TYPES:
         datadog_event['alert_type'] = 'success'
-
-    elif _is_asg_launch_unsuccessful(event):
-        datadog_event['alert_type'] = 'error'
-
-    elif _is_asg_terminate_action(event):
-        datadog_event['alert_type'] = 'info'
-
-    elif _is_asg_terminate_successful(event):
-        datadog_event['alert_type'] = 'success'
-
-    elif _is_asg_terminate_unsuccessful(event):
+    else:
         datadog_event['alert_type'] = 'error'
 
     return datadog_event
-
-
-def _is_asg_launch_action(event: dict) -> bool:
-    '''Check if event is an ASG launch event.'''
-    return event.get('detail-type') == 'EC2 Instance-launch Lifecycle Action'
-
-
-def _is_asg_launch_successful(event: dict) -> dict:
-    '''Check if event is a successful launch event'''
-    return event.get('detail-type') == 'EC2 Instance Launch Successful'
-
-
-def _is_asg_launch_unsuccessful(event: dict) -> dict:
-    '''Check if event is a successful launch event'''
-    return event.get('detail-type') == 'EC2 Instance Launch Unsuccessful'
-
-
-def _is_asg_terminate_action(event: dict) -> dict:
-    '''Check if event is a successful launch event'''
-    return event.get('detail-type') == 'EC2 Instance-terminate Lifecycle Action'
-
-
-def _is_asg_terminate_successful(event: dict) -> dict:
-    '''Check if event is a successful terminate event'''
-    return event.get('detail-type') == 'EC2 Instance Terminate Successful'
-
-
-def _is_asg_terminate_unsuccessful(event: dict) -> dict:
-    '''Check if event is a successful terminate event'''
-    return event.get('detail-type') == 'EC2 Instance Terminate Unsuccessful'
 
 
 def handler(event, context):
