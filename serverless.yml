@@ -16,7 +16,7 @@ custom:
     datadog_app_key: "${env:DATADOG_APP_KEY, ''}"
 
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: false
 
 provider:
   name: aws
