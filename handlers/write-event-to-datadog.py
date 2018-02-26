@@ -40,7 +40,7 @@ def _create_datadog_event(event: dict) -> dict:
     datadog_event['source_type_name'] = SOURCE_TYPE_NAME
     datadog_event['host'] = event.get('detail').get('EC2InstanceId')
 
-    datadog_event['text'] = '{asg}[{host}]: {detail}'.format(
+    datadog_event['text'] = _get_event_text(
         asg=event.get('detail').get('AutoScalingGroupName'),
         host=event.get('detail').get('EC2InstanceId'),
         detail=datadog_event['title']
@@ -55,6 +55,16 @@ def _create_datadog_event(event: dict) -> dict:
         datadog_event['alert_type'] = 'error'
 
     return datadog_event
+
+
+def _get_event_text(asg: str, host: str, detail: str) -> str:
+    msg = '''
+    ASG: {asg}
+    Host: {host}
+
+    Detail: {detail}
+    '''
+    return msg.format(asg, host, detail)
 
 
 def handler(event, context):
