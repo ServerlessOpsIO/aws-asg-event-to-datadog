@@ -43,7 +43,7 @@ def _create_datadog_event(event: dict) -> dict:
     datadog_event['text'] = _get_event_text(
         asg=event.get('detail').get('AutoScalingGroupName'),
         host=event.get('detail').get('EC2InstanceId'),
-        region=event.get('region')
+        region=event.get('region'),
         detail=datadog_event['title']
     )
 
@@ -58,7 +58,7 @@ def _create_datadog_event(event: dict) -> dict:
     return datadog_event
 
 
-def _get_event_text(asg: str, host: str, region:str, detail: str) -> str:
+def _get_event_text(asg: str, host: str, region: str, detail: str) -> str:
     msg = '''
     ASG: {asg}
     Host: {host}
@@ -66,7 +66,7 @@ def _get_event_text(asg: str, host: str, region:str, detail: str) -> str:
 
     Detail: {detail}
     '''
-    return msg.format(asg=asg, host=host, region=region detail=detail)
+    return msg.format(asg=asg, host=host, region=region, detail=detail)
 
 
 def handler(event, context):
