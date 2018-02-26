@@ -68,7 +68,7 @@ jobs:
         - mkdir $DIST_DIR
         # all our artifacts from this stage will be in $DIST_DIR. However,
         # `aws cloudformation package` will upload the SAM code deployable.
-        - sls sam export --output ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --codeuri s3://${S3_DEPLOY_ARTIFACT}
+        - sls sam export --output ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --codeuri s3://${S3_BUCKET}/${S3_DEPLOY_ARTIFACT}
         - aws cloudformation package --template-file ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --output-template-file ${DIST_DIR}/${AWS_CFN_TMPL_NAME} --s3-bucket ${S3_BUCKET} --s3-prefix ${S3_DEPLOY_PREFIX}
       deploy:
         - provider: s3
