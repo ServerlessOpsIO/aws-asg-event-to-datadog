@@ -28,7 +28,7 @@ provider:
 
 functions:
   WriteEvent:
-    handler: handlers/write-launch-event-to-datadog.handler
+    handler: handlers/write-event-to-datadog.handler
     description: "Write ASG autoscaling events to Datadog"
     memorySize: 128
     timeout: 30
