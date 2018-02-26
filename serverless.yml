@@ -1,5 +1,5 @@
 # Send ASG events to Datadog
-service: asg-event-to-datadog
+service: aws-asg-event-to-datadog
 
 plugins:
   - serverless-python-requirements
