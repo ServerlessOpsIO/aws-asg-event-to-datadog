@@ -80,10 +80,6 @@ jobs:
             repo: "$TRAVIS_REPO_SLUG"
           access_key_id: "$AWS_ACCESS_KEY_ID"
           secret_access_key: "$AWS_SECRET_ACCESS_KEY"
-      after_deploy:
-        # XXX: Need to make deploy object public and this is a dirty hack since
-        # `aws cloudformation package` doesn't allow setting the ACL.
-        - aws s3 cp --recursive --acl public-read s3://${S3_BUCKET}/${S3_DEPLOY_PREFIX}/ s3://${S3_BUCKET}/${S3_DEPLOY_PREFIX}/
 
     # FIXME: We could use some tagging.
     - stage: promote
