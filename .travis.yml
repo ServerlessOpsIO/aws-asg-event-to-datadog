@@ -6,6 +6,7 @@ env:
     - S3_BUCKET="serverlessops-opensource-deploy-prod"
     - S3_BUILD_PREFIX="${PROJECT_NAME}/${ARTIFACT_ID}/build"
     - S3_DEPLOY_PREFIX="${PROJECT_NAME}/${ARTIFACT_ID}/deploy"
+    - S3_DEPLOY_ARTIFACT="${S3_DEPLOY_PREFIX}/${PROJECT_NAME}.zip"
     - AWS_SAM_TMPL_NAME="sam-template.yml"
     - AWS_CFN_TMPL_NAME="cfn-template.yml"
     - AWS_DEFAULT_REGION="us-east-1"
@@ -67,8 +68,8 @@ jobs:
         - mkdir $DIST_DIR
         # all our artifacts from this stage will be in $DIST_DIR. However,
         # `aws cloudformation package` will upload the SAM code deployable.
-        #- sls sam export --output ${DIST_DIR}/${AWS_SAM_TMPL_NAME}
-        #- aws cloudformation package --template-file ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --output-template-file ${DIST_DIR}/${AWS_CFN_TMPL_NAME} --s3-bucket ${S3_BUCKET} --s3-prefix ${S3_DEPLOY_PREFIX}
+        - sls sam export --output ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --codeuri s3://${S3_DEPLOY_ARTIFACT}
+        - aws cloudformation package --template-file ${DIST_DIR}/${AWS_SAM_TMPL_NAME} --output-template-file ${DIST_DIR}/${AWS_CFN_TMPL_NAME} --s3-bucket ${S3_BUCKET} --s3-prefix ${S3_DEPLOY_PREFIX}
       deploy:
         - provider: s3
           skip_cleanup: true
@@ -85,6 +86,7 @@ jobs:
         # `aws cloudformation package` doesn't allow setting the ACL.
         - aws s3 cp --recursive --acl public-read s3://${S3_BUCKET}/${S3_DEPLOY_PREFIX}/ s3://${S3_BUCKET}/${S3_DEPLOY_PREFIX}/
 
+    # FIXME: We could use some tagging.
     - stage: promote
       language: python
       python: '3.6'
@@ -92,8 +94,7 @@ jobs:
         - pip install awscli
       script: skip
 
-      # FIXME: There's still an issue with browser caching an old link. May
-      # need to look at rewriting the contents of the file.
+      # FIXME: We want a temporary redirect, not a permanent.
       deploy:
         - provider: script
           script: aws s3api put-object --acl public-read --bucket $S3_BUCKET --key ${PROJECT_NAME}/CFN-DEPLOY-LATEST --website-redirect-location "https://console.aws.amazon.com/cloudformation/home?region=${AWS_DEFAULT_REGION}#/stacks/new?stackName=${PROJECT_NAME}&templateURL=https://${S3_BUCKET}.s3.amazonaws.com/${S3_DEPLOY_PREFIX}/${AWS_CFN_TMPL_NAME}" --cache-control "max-age=60"
