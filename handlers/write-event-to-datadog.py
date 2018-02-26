@@ -21,12 +21,12 @@ INFO_TYPES = [
     'EC2 Instance-terminate Lifecycle Action'
 ]
 
-ERROR_TYPES = [
+SUCCESS_TYPES = [
     'EC2 Instance Launch Successful',
     'EC2 Instance Terminate Successful'
 ]
 
-SUCCESS_TYPES = [
+ERROR_TYPES = [
     'EC2 Instance Launch Unsuccessful',
     'EC2 Instance Terminate Unsuccessful'
 
